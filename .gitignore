@@ -1,0 +1,19 @@
+# Purchased art: not redistributable (see cv-dog/README.md)
+cv-dog/assets/dog/
+
+# Local runtime: the flwrs server binary, its data, downloaded models and
+# plugin packages (see cv-dog/scene/README.md)
+cv-dog/bin/
+cv-dog/.data/
+cv-dog/models/
+cv-dog/packages/
+# ./install: the flwrs checkout and its build output
+cv-dog/.flwrs/
+cv-dog/.build/
+cv-dog/scene/bin/
+cv-dog/scene/.data/
+cv-dog/scene/models/
+cv-dog/scene/packages/
+
+.DS_Store
+__pycache__/

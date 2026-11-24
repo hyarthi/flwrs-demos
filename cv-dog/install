@@ -1,0 +1,157 @@
+#!/bin/sh
+# Installs the cv-dog demo: builds flwrs (the server and its plugins) from
+# source, downloads the models, and sets up the demo's scene on a local
+# server. Safe to re-run. Everything it makes stays in this folder, in
+# gitignored places: .flwrs/ (the flwrs checkout), .build/ (build output),
+# bin/ (the server), packages/ (plugin packages), models/, .data/.
+#
+#   ./install                    the newest flwrs release (a v<version> tag)
+#   ./install --ref main         a branch, tag or commit of flwrs instead
+#   ./install --flwrs <path>     a local flwrs checkout as it is (development)
+#   ./install --plugins a,b      build these plugins (default: the ones the
+#                                scene uses, listed in scene/plugins.txt)
+#   ./install --plugins all      build every flwrs plugin
+#   ./install --debug            debug builds (faster to build, slower to run)
+#
+# Needs: git, curl, python3, a C compiler, the Rust toolchain flwrs asks for
+# (its rust-version), Node.js 20.19+ and npm (the server's web UI).
+# FLWRS_REPO overrides where flwrs is cloned from (a URL or a local path).
+#
+# install.ps1 is the Windows version: keep the two in step.
+set -eu
+
+DEMO=$(cd "$(dirname "$0")" && pwd)
+REPO=${FLWRS_REPO:-https://github.com/hyarthi/flwrs}
+REF=
+SRC=
+PLUGINS=
+PROFILE=release
+
+say() { printf '%s\n' "$*"; }
+die() { printf 'install: %s\n' "$*" >&2; exit 1; }
+
+while [ $# -gt 0 ]; do
+  case $1 in
+    --ref) [ $# -ge 2 ] || die "--ref needs a value"; REF=$2; shift 2 ;;
+    --flwrs) [ $# -ge 2 ] || die "--flwrs needs a path"; SRC=$(cd "$2" && pwd); shift 2 ;;
+    --plugins) [ $# -ge 2 ] || die "--plugins needs a list"; PLUGINS=$(printf '%s' "$2" | tr ',' ' '); shift 2 ;;
+    --debug) PROFILE=debug; shift ;;
+    -h|--help) awk 'NR > 1 && /^#/ { sub(/^# ?/, ""); print; next } NR > 1 { exit }' "$0"; exit 0 ;;
+    *) die "unknown option $1 (see --help)" ;;
+  esac
+done
+
+# --- Tools -------------------------------------------------------------------
+missing=
+need() { command -v "$1" >/dev/null 2>&1 || missing="$missing\n  - $1 ($2)"; }
+need git "https://git-scm.com"
+need curl "https://curl.se"
+need python3 "https://www.python.org (3.8 or newer)"
+need cargo "Rust: https://rustup.rs"
+need node "Node.js 20.19 or newer: https://nodejs.org"
+need npm "comes with Node.js"
+command -v cc >/dev/null 2>&1 || command -v gcc >/dev/null 2>&1 || command -v clang >/dev/null 2>&1 ||
+  missing="$missing\n  - a C compiler (macOS: xcode-select --install; Debian/Ubuntu: apt install build-essential)"
+if [ -n "$missing" ]; then
+  printf 'install: missing tools:%b\n' "$missing" >&2
+  exit 1
+fi
+node_ok=$(node -e 'const [a,b]=process.versions.node.split(".").map(Number); console.log(a>20||(a===20&&b>=19)?1:0)')
+[ "$node_ok" = 1 ] || die "Node.js $(node --version) is too old: the web UI needs 20.19 or newer"
+
+# --- flwrs source -------------------------------------------------------------
+if [ -n "$SRC" ]; then
+  say "Using the flwrs checkout at $SRC (as it is)."
+else
+  SRC=$DEMO/.flwrs
+  if [ -d "$SRC/.git" ]; then
+    say "Updating flwrs in .flwrs/"
+    git -C "$SRC" fetch --quiet --tags origin
+  else
+    say "Cloning $REPO into .flwrs/"
+    git clone --quiet "$REPO" "$SRC"
+  fi
+  if [ -z "$REF" ]; then
+    # The newest server release: v<version> tags, by version order.
+    REF=$(git -C "$SRC" tag --list 'v*' --sort=-v:refname | head -n 1)
+    [ -n "$REF" ] || die "flwrs has no release (v<version> tag) yet: pick one with --ref <branch|tag|commit>, e.g. --ref main"
+  fi
+  git -C "$SRC" checkout --quiet --detach "$REF" 2>/dev/null ||
+    git -C "$SRC" checkout --quiet --detach "origin/$REF" ||
+    die "no such flwrs ref: $REF"
+  say "flwrs at $REF ($(git -C "$SRC" rev-parse --short HEAD))"
+fi
+[ -f "$SRC/Cargo.toml" ] || die "$SRC isn't a flwrs checkout (no Cargo.toml)"
+
+want=$(sed -n 's/^rust-version *= *"\([0-9.]*\)".*/\1/p' "$SRC/Cargo.toml" | head -n 1)
+have=$(cd "$SRC" && rustc --version | sed 's/^rustc \([0-9.]*\).*/\1/')
+older=$(printf '%s\n%s\n' "$want" "$have" | sort -t. -k1,1n -k2,2n -k3,3n | head -n 1)
+[ "$older" = "$want" ] || die "Rust $have is older than flwrs needs ($want): rustup update"
+
+# --- Build ----------------------------------------------------------------------
+mkdir -p "$DEMO/bin" "$DEMO/packages" "$DEMO/.build/target"
+cargo_profile=--release
+[ "$PROFILE" = release ] || cargo_profile=
+say "Building the flwrs server ($PROFILE; the first build takes a while)"
+(cd "$SRC" && CARGO_TARGET_DIR="$DEMO/.build/target/server" cargo build --quiet $cargo_profile -p flwrs-app)
+cp "$DEMO/.build/target/server/$PROFILE/flwrs-app" "$DEMO/bin/flwrs-app"
+
+if [ -z "$PLUGINS" ]; then
+  # The plugins the scene uses.
+  PLUGINS=$(grep -v '^ *#' "$DEMO/scene/plugins.txt" | tr -s ' \t\r' '\n\n\n' | grep -v '^$' | tr '\n' ' ')
+elif [ "$PLUGINS" = all ]; then
+  PLUGINS=
+  for m in "$SRC"/plugins/*/manifest.json; do
+    PLUGINS="$PLUGINS $(basename "$(dirname "$m")")"
+  done
+fi
+trellis_profile=
+[ "$PROFILE" = release ] || trellis_profile=--debug
+rm -f "$DEMO"/packages/*.zip
+for p in $PLUGINS; do
+  [ -f "$SRC/plugins/$p/manifest.json" ] || die "no plugin $p in flwrs (plugins/$p/manifest.json)"
+  say "Packaging plugin $p"
+  # Each plugin in its own target folder (their builds enable other features).
+  (cd "$SRC" && CARGO_TARGET_DIR="$DEMO/.build/target/$p" \
+    cargo trellis package "plugins/$p" $trellis_profile --out "$DEMO/packages" >/dev/null)
+done
+
+# --- Models -------------------------------------------------------------------------
+mkdir -p "$DEMO/models"
+sha256() { if command -v sha256sum >/dev/null 2>&1; then sha256sum "$1"; else shasum -a 256 "$1"; fi | cut -d' ' -f1; }
+grep -v '^#' "$DEMO/scene/models.txt" | while IFS="$(printf '\t')" read -r file sum url license source; do
+  [ -n "$file" ] || continue
+  target=$DEMO/models/$file
+  if [ -f "$target" ] && [ "$(sha256 "$target")" = "$sum" ]; then
+    say "Model $file: already here"
+    continue
+  fi
+  say "Downloading $file ($license)"
+  curl --fail --location --silent --show-error -o "$target.part" "$url"
+  got=$(sha256 "$target.part")
+  if [ "$got" != "$sum" ]; then
+    rm -f "$target.part"
+    die "$file: SHA-256 $got, expected $sum (from $url): not using it"
+  fi
+  mv "$target.part" "$target"
+done
+
+# --- The scene ------------------------------------------------------------------------
+say "Setting up the scene"
+cd "$DEMO"
+mkdir -p .data
+set -m  # the server in its own process group: a Ctrl+C stops it through the trap
+./bin/flwrs-app --config scene/config.toml >.data/install-server.log 2>&1 &
+server=$!
+set +m
+stop_server() {
+  kill -TERM "$server" 2>/dev/null || true
+  wait "$server" 2>/dev/null || true
+}
+trap 'stop_server' EXIT INT TERM
+python3 scene/setup.py wait 60
+python3 scene/setup.py plugins packages
+python3 scene/setup.py scene models
+stop_server
+trap - EXIT INT TERM
+say "Installed. Start the demo with ./run"

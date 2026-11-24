@@ -1,0 +1,8 @@
+# The models the demo's graph uses, downloaded by ./install into models/.
+# Each pinned to a Hugging Face commit, and checked against its SHA-256.
+#
+# file  sha256  url  license  source
+movenet_multi.onnx	60f724a56f0119d22d2afcf530019db307c77d4ea598eb5bd53bb65afe93930d	https://huggingface.co/Xenova/movenet-multipose-lightning/resolve/8506174df310cf154b97352afa98d1ea4b1e4b47/onnx/model.onnx	Apache-2.0	MoveNet MultiPose Lightning (Google), ONNX export by Xenova
+gesture_hand_lm.onnx	b4ac6e8ad824556264bd2e76141881904beeab80b63c9de56449dedbadf23471	https://huggingface.co/anira-project/mediapipe-gesture-recognizer/resolve/9d8cae03055161caa07572122efe0e27e038354e/onnx/hand_landmarks_detector.onnx	Apache-2.0	MediaPipe Gesture Recognizer (Google): hand landmarks, ONNX export by anira-project
+gesture_embedder.onnx	b58c43055433d21c4075a0a5bdb9d641f418960dbbbf0a8673558a8b2ed6991e	https://huggingface.co/anira-project/mediapipe-gesture-recognizer/resolve/9d8cae03055161caa07572122efe0e27e038354e/onnx/gesture_embedder.onnx	Apache-2.0	MediaPipe Gesture Recognizer (Google): gesture embedder, ONNX export by anira-project
+gesture_classifier.onnx	0878082b485c565b9d95ccd805bf2d83e9a7cebe198d7899f26094d626433cd4	https://huggingface.co/anira-project/mediapipe-gesture-recognizer/resolve/9d8cae03055161caa07572122efe0e27e038354e/onnx/canned_gesture_classifier.onnx	Apache-2.0	MediaPipe Gesture Recognizer (Google): canned gesture classifier, ONNX export by anira-project

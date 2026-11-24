@@ -1,0 +1,212 @@
+{
+  "nodes": {
+    "camera": {
+      "type": "source"
+    },
+    "pose": {
+      "type": "model",
+      "model": "movenet_multi.onnx",
+      "pre": {
+        "width": 256,
+        "height": 256,
+        "resize": "letterbox",
+        "color": "rgb",
+        "dtype": "i32",
+        "layout": "nhwc"
+      },
+      "decode": {
+        "type": "movenet",
+        "output": "output_0",
+        "multi": true
+      },
+      "min_confidence": 0.3,
+      "labels": [
+        "person"
+      ],
+      "keypoint_layout": "coco17"
+    },
+    "people": {
+      "type": "tracker",
+      "smooth_keypoints": {},
+      "max_lost_s": 1.0
+    },
+    "left_hand_roi": {
+      "type": "crop",
+      "max": 4,
+      "center_keypoint": 9,
+      "size_keypoints": [
+        7,
+        9
+      ],
+      "rotate": {
+        "from": 7,
+        "to": 9,
+        "angle": 90.0
+      },
+      "scale": 0.9,
+      "shift_y": -0.3,
+      "square": true
+    },
+    "left_hand": {
+      "type": "model",
+      "model": "gesture_hand_lm.onnx",
+      "pre": {
+        "width": 224,
+        "height": 224,
+        "resize": "stretch",
+        "color": "rgb",
+        "dtype": "f32",
+        "scale": 0.0039215686,
+        "layout": "nhwc"
+      },
+      "decode": {
+        "type": "landmarks",
+        "output": "Identity",
+        "points": 21,
+        "dims": 3,
+        "presence": "Identity_1",
+        "world": "Identity_3",
+        "handedness": "Identity_2"
+      },
+      "min_confidence": 0.5,
+      "keypoint_layout": "hand21"
+    },
+    "left_gesture": {
+      "type": "model",
+      "model": "gesture_classifier.onnx",
+      "tensor_input": {
+        "embedder": "gesture_embedder.onnx"
+      },
+      "decode": {
+        "type": "classify",
+        "output": "Identity",
+        "softmax": false,
+        "topk": 1
+      },
+      "labels": [
+        "none",
+        "closed_fist",
+        "open_palm",
+        "pointing_up",
+        "thumb_down",
+        "thumb_up",
+        "victory",
+        "i_love_you"
+      ]
+    },
+    "right_hand_roi": {
+      "type": "crop",
+      "max": 4,
+      "center_keypoint": 10,
+      "size_keypoints": [
+        8,
+        10
+      ],
+      "rotate": {
+        "from": 8,
+        "to": 10,
+        "angle": 90.0
+      },
+      "scale": 0.9,
+      "shift_y": -0.3,
+      "square": true
+    },
+    "right_hand": {
+      "type": "model",
+      "model": "gesture_hand_lm.onnx",
+      "pre": {
+        "width": 224,
+        "height": 224,
+        "resize": "stretch",
+        "color": "rgb",
+        "dtype": "f32",
+        "scale": 0.0039215686,
+        "layout": "nhwc"
+      },
+      "decode": {
+        "type": "landmarks",
+        "output": "Identity",
+        "points": 21,
+        "dims": 3,
+        "presence": "Identity_1",
+        "world": "Identity_3",
+        "handedness": "Identity_2"
+      },
+      "min_confidence": 0.5,
+      "keypoint_layout": "hand21"
+    },
+    "right_gesture": {
+      "type": "model",
+      "model": "gesture_classifier.onnx",
+      "tensor_input": {
+        "embedder": "gesture_embedder.onnx"
+      },
+      "decode": {
+        "type": "classify",
+        "output": "Identity",
+        "softmax": false,
+        "topk": 1
+      },
+      "labels": [
+        "none",
+        "closed_fist",
+        "open_palm",
+        "pointing_up",
+        "thumb_down",
+        "thumb_up",
+        "victory",
+        "i_love_you"
+      ]
+    },
+    "dog": {
+      "type": "lua",
+      "script": "@include:dog.lua"
+    }
+  },
+  "links": [
+    {
+      "from": "camera.frame",
+      "to": "pose.frame"
+    },
+    {
+      "from": "pose.objects",
+      "to": "people.objects"
+    },
+    {
+      "from": "camera.frame",
+      "to": "left_hand_roi.frame"
+    },
+    {
+      "from": "people.objects",
+      "to": "left_hand_roi.objects"
+    },
+    {
+      "from": "left_hand_roi.regions",
+      "to": "left_hand.frame"
+    },
+    {
+      "from": "left_hand.objects",
+      "to": "left_gesture.objects"
+    },
+    {
+      "from": "camera.frame",
+      "to": "right_hand_roi.frame"
+    },
+    {
+      "from": "people.objects",
+      "to": "right_hand_roi.objects"
+    },
+    {
+      "from": "right_hand_roi.regions",
+      "to": "right_hand.frame"
+    },
+    {
+      "from": "right_hand.objects",
+      "to": "right_gesture.objects"
+    },
+    {
+      "from": "people.objects",
+      "to": "dog.objects"
+    }
+  ]
+}

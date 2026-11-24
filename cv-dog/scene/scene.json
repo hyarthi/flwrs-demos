@@ -1,0 +1,53 @@
+{
+  "name": "cv-dog",
+  "nodes": {
+    "camera": {
+      "plugin_id": "cv-source",
+      "position": {"x": 0, "y": 0},
+      "config": {
+        "launch": "local",
+        "launch_args": {
+          "graph": "@graph",
+          "input": {"type": "camera", "width": 1280, "height": 720, "fps": 30},
+          "files": [
+            "movenet_multi.onnx",
+            "gesture_hand_lm.onnx",
+            "gesture_embedder.onnx",
+            "gesture_classifier.onnx"
+          ]
+        }
+      },
+      "uploads": [
+        "movenet_multi.onnx",
+        "gesture_hand_lm.onnx",
+        "gesture_embedder.onnx",
+        "gesture_classifier.onnx"
+      ]
+    },
+    "page": {
+      "plugin_id": "http-push-sink",
+      "position": {"x": 320, "y": 0},
+      "config": {
+        "launch": "local",
+        "launch_args": {
+          "listen": "127.0.0.1:8090",
+          "allowed_origins": ["*"],
+          "allowed_channels": ["dog"],
+          "default_channel": "dog",
+          "ack_mode": "buffered",
+          "replay_events": 16
+        }
+      }
+    }
+  },
+  "edges": [
+    {
+      "from": "camera",
+      "to": "page",
+      "mapping": {
+        "filter": {"lua": "return payload.event == \"dog\""},
+        "script": {"lua": "@include:mapping.lua"}
+      }
+    }
+  ]
+}

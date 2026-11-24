@@ -1,0 +1,4 @@
+# The flwrs plugins this demo's scene uses: folders under plugins/ in flwrs.
+# ./install (and install.ps1) build only these, unless --plugins says otherwise.
+cv_source
+http_push_sink

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="EMPTY_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/app/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/core/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/e2e/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/e2e/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugin/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugin/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/accumulator/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/accumulator/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/accumulator/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/cv_source/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/cv_source/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/cv_source/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/http_push_sink/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/http_push_sink/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/http_push_sink/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/http_sink/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/http_sink/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/http_source/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/http_source/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/http_source/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/kit/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/mqtt_sink/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/mqtt_sink/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/mqtt_sink/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/mqtt_source/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/mqtt_source/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/mqtt_source/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/script_transform/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/script_transform/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/script_transform/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/ticker/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/ticker/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/ticker/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/ws_push_sink/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/ws_push_sink/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/ws_push_sink/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/ws_sink/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/ws_sink/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/ws_sink/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/ws_source/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/ws_source/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/plugins/ws_source/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/trellis/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/trellis/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/types/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/cv-dog/.flwrs/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

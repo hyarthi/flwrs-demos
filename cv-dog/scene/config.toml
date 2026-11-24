@@ -1,0 +1,36 @@
+# The flwrs server's settings for this demo. Paths are relative to the
+# folder the server runs in, cv-dog/ (./install and ./run start it there), so
+# every bit of runtime data stays in cv-dog/.data/ (gitignored).
+
+[http]
+host = "127.0.0.1"
+# The server's web UI and REST API: http://127.0.0.1:8077
+port = 8077
+
+[logging]
+format = "PLAIN"
+level = "INFO"
+
+[[logging.sinks]]
+sink_type = "CONSOLE"
+
+[[logging.sinks]]
+sink_type = "FILE"
+file_directory = ".data/logs/"
+
+[db.main]
+filename = ".data/main.db"
+
+[hub]
+host = "127.0.0.1"
+port = 0
+
+[director]
+nodes_dir = ".data/nodes"
+spool_dir = ".data/scenes"
+files_dir = ".data/files"
+
+[plugins]
+dir = ".data/plugins"
+# The installer uploads the plugin packages it built (from loopback only).
+allow_upload = true
